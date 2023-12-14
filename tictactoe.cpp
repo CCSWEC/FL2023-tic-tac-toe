@@ -1,4 +1,3 @@
-Test
 /*
 This function will display the tictactoe gameboard, each cell will be an index of a 2D array
 */
