@@ -1,6 +1,5 @@
 #include <iostream>
 #include <iomanip>
-#include "utils.cpp"
 
 
 using namespace std;
@@ -19,20 +18,20 @@ int main()
     int player1Score = 0;
     int player2Score = 0;
 
-    char cells[ROWS][COLUMNS] = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
+    char cells[ROWS][COLUMNS] = { {' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '} };
 
     cout << "Enter 0 to play against another player,\nEnter 1 to play against the A.I." << endl;
     int playChoice;
     cin >> playChoice;
-    
+
     //loop to determine validity of playChoice
-    while(playChoice  < 0 && playChoice > 1){
+    while (playChoice < 0 && playChoice > 1) {
         cout << "Invalid. Please enter either 0 or 1";
         cin >> playChoice;
     }
-    
+
     //call to the AI function
-    if(playChoice == 1){
+    if (playChoice == 1) {
         //call to AI function
     }
 
@@ -110,7 +109,7 @@ void displayBoard(char cells[][COLUMNS])
 
     cout << " ";
     cout << setw(8) << "A" << setw(9) << "B" << setw(9) << "C" << endl
-         << endl;
+        << endl;
 
     for (int i = 0; i < ROWS; i++)
     {
@@ -142,7 +141,6 @@ void displayBoard(char cells[][COLUMNS])
             cout << endl;
         }
     }
-
     cout << endl;
 }
 
