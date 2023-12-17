@@ -12,6 +12,7 @@ void displayBoard(char[][COLUMNS]);
 bool makeMove(char[][COLUMNS], int, int, char);
 bool isBoardFull(char[][COLUMNS]);
 bool checkForWin(char[][COLUMNS], char);
+void restartGame();
 
 int main()
 {
@@ -80,13 +81,19 @@ int main()
             if (checkForWin(cells, currentPlayer))
             {
                 cout << "Player " << currentPlayer << " wins!" << endl;
-                break;
+
+            //call restartGame function
+            restartGame();
+            break;
             }
 
             // Check for a tie
             if (isBoardFull(cells))
             {
                 cout << "The game is a tie!" << endl;
+            
+            //call restartGame function
+            restartGame();    
                 break;
             }
 
@@ -189,3 +196,33 @@ bool checkForWin(char cells[][COLUMNS], char player)
 
     return false;
 }
+
+//Define restartGame function
+    void restartGame()
+    {
+        cout << "Do you want to play again?" << endl;
+        cout << "Enter 1 to play again. Enter 0 to end." << endl;
+        
+        int restart = 0;
+        cin >> restart;
+                
+         //check for restart input validity
+            while (restart !=0)
+            {
+                while (restart < 0 || restart > 1)
+                    {
+                        cout << "Invalid please enter either 0 or 1" << endl;
+                        cin >> restart;
+                    }
+        //restart game
+                if (restart = 1)
+                    {
+                        main();
+                    }
+                else 
+                {
+        //end game
+                    return;
+                }
+            }
+    }
