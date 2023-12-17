@@ -94,7 +94,7 @@ int main()
             
             //call restartGame function
             restartGame();    
-                break;
+            break;
             }
 
             // Switch to the other player
@@ -207,7 +207,7 @@ bool checkForWin(char cells[][COLUMNS], char player)
         cin >> restart;
                 
          //check for restart input validity
-            while (restart !=0)
+            while (restart != 0)
             {
                 while (restart < 0 || restart > 1)
                     {
@@ -215,7 +215,7 @@ bool checkForWin(char cells[][COLUMNS], char player)
                         cin >> restart;
                     }
         //restart game
-                if (restart = 1)
+                if (restart == 1)
                     {
                         main();
                     }
