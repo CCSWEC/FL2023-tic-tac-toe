@@ -1,228 +1,155 @@
 #include <iostream>
-#include <iomanip>
+#include <vector>
+#include <cstdlib>  
+#include <ctime>    
+class TicTacToe {
+private:
+    std::vector<char> board;
+    char current_player;
 
-
-using namespace std;
-
-const int ROWS = 3;
-const int COLUMNS = 3;
-const int MAX_ATTEMPTS = 3; // Maximum attempts for making a move
-
-void displayBoard(char[][COLUMNS]);
-bool makeMove(char[][COLUMNS], int, int, char);
-bool isBoardFull(char[][COLUMNS]);
-bool checkForWin(char[][COLUMNS], char);
-void restartGame();
-
-int main()
-{
-    int player1Score = 0;
-    int player2Score = 0;
-
-    char cells[ROWS][COLUMNS] = { {' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '} };
-
-    cout << "Enter 0 to play against another player,\nEnter 1 to play against the A.I." << endl;
-    int playChoice;
-    cin >> playChoice;
-
-    //loop to determine validity of playChoice
-    while (playChoice < 0 && playChoice > 1) {
-        cout << "Invalid. Please enter either 0 or 1";
-        cin >> playChoice;
-    }
-
-    //call to the AI function
-    if (playChoice == 1) {
-        //call to AI function
-    }
-
-    displayBoard(cells);
-
-    char currentPlayer = 'X';
-
-    while (true)
-    {
-        int row, col;
-        int attempts = 0;
-
-        while (true)
-        {
-            // Get player move
-            cout << "Player " << currentPlayer << ", enter your move (row and column): ";
-            char colChar;
-            cin >> row >> colChar;
-
-            // Convert the column character to uppercase
-            colChar = toupper(colChar);
-
-            // Check if the move is valid
-            col = colChar - 'A' + 1; // Convert column character to a numerical value
-            if (row >= 1 && row <= ROWS && col >= 1 && col <= COLUMNS && cells[row - 1][col - 1] == ' ')
-            {
-                break; // Valid move, exit the loop
-            }
-
-            cout << "Invalid move. Try again." << endl;
-
-            attempts++;
-            if (attempts >= MAX_ATTEMPTS)
-            {
-                cout << "Too many invalid attempts. Exiting the game." << endl;
-                return 1; // Exit with an error code
-            }
-        }
-
-        // Make the move
-        if (makeMove(cells, row - 1, col - 1, currentPlayer))
-        {
-            displayBoard(cells);
-
-            // Check for a win
-            if (checkForWin(cells, currentPlayer))
-            {
-                cout << "Player " << currentPlayer << " wins!" << endl;
-
-            //call restartGame function
-            restartGame();
-            break;
-            }
-
-            // Check for a tie
-            if (isBoardFull(cells))
-            {
-                cout << "The game is a tie!" << endl;
-            
-            //call restartGame function
-            restartGame();    
-            break;
-            }
-
-            // Switch to the other player
-            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-        }
-        else
-        {
-            cout << "Invalid move. Try again." << endl;
+    void displayBoard() {
+        for (int i = 0; i < 3; ++i) {
+            std::cout << board[i*3] << "|" << board[i*3 + 1] << "|" << board[i*3 + 2] << std::endl;
+            if (i < 2) std::cout << "-+-+-" << std::endl;
         }
     }
 
-    return 0;
-}
+    bool makeMove(int position) {
+        if (position >= 0 && position < board.size() && board[position] == ' ') {
+            board[position] = current_player;
+            return true;
+        }
+        return false;
+    }
 
-
-void displayBoard(char cells[][COLUMNS])
-{
-    const int DASHES = 22;
-
-    cout << " ";
-    cout << setw(8) << "A" << setw(9) << "B" << setw(9) << "C" << endl
-        << endl;
-
-    for (int i = 0; i < ROWS; i++)
-    {
-        cout << i + 1 << setw(8);
-
-        for (int j = 0; j < COLUMNS; j++)
-        {
-            cout << cells[i][j] << setw(4);
-
-            if (j < COLUMNS - 1)
-            {
-                cout << "|";
-                cout << setw(4);
+    char checkWin() {
+        const int win_conditions[8][3] = {
+            {0, 1, 2}, {3, 4, 5}, {6, 7, 8},
+            {0, 3, 6}, {1, 4, 7}, {2, 5, 8},
+            {0, 4, 8}, {2, 4, 6}
+        };
+        for (auto &condition : win_conditions) {
+            if (board[condition[0]] == board[condition[1]] &&
+                board[condition[1]] == board[condition[2]] &&
+                board[condition[0]] != ' ') {
+                return board[condition[0]];
             }
         }
+        return 0;
+    }
 
-        cout << endl;
+    void switchPlayer() {
+        current_player = (current_player == 'X') ? 'O' : 'X';
+    }
 
-        if (i < ROWS - 1)
-        {
-            cout << " ";
-            cout << setw(4);
+    void makeAIMove() {
+        std::vector<int> available_positions;
+        for (int i = 0; i < board.size(); ++i) {
+            if (board[i] == ' ') available_positions.push_back(i);
+        }
+        int position = available_positions[rand() % available_positions.size()];
+        makeMove(position);
+        switchPlayer();
+    }
 
-            for (int k = 0; k < DASHES; k++)
-            {
-                cout << "-";
-            }
-
-            cout << endl;
+    void displayResult(char winner) {
+        if (winner) {
+            std::cout << "Player " << winner << " wins!" << std::endl;
+        } else {
+            std::cout << "It's a draw!" << std::endl;
         }
     }
-    cout << endl;
-}
 
-bool makeMove(char cells[][COLUMNS], int row, int col, char player)
-{
-    if (cells[row][col] == ' ')
-    {
-        cells[row][col] = player;
-        return true;
-    }
-    return false;
-}
+public:
+    TicTacToe() : board(9, ' '), current_player('X') {}
 
-bool isBoardFull(char cells[][COLUMNS])
-{
-    for (int i = 0; i < ROWS; i++)
-    {
-        for (int j = 0; j < COLUMNS; j++)
-        {
-            if (cells[i][j] == ' ')
-            {
-                return false; // Found an empty cell, the board is not full
-            }
-        }
-    }
-    return true; // All cells are filled, the board is full
-}
-
-bool checkForWin(char cells[][COLUMNS], char player)
-{
-    // Check rows, columns, and diagonals for a win
-    for (int i = 0; i < ROWS; i++)
-    {
-        if (cells[i][0] == player && cells[i][1] == player && cells[i][2] == player)
-            return true; // Row win
-
-        if (cells[0][i] == player && cells[1][i] == player && cells[2][i] == player)
-            return true; // Column win
+    void initializeBoard() {
+        board.assign(9, ' ');
+        current_player = 'X';
     }
 
-    if (cells[0][0] == player && cells[1][1] == player && cells[2][2] == player)
-        return true; // Diagonal win
-
-    if (cells[0][2] == player && cells[1][1] == player && cells[2][0] == player)
-        return true; // Diagonal win
-
-    return false;
-}
-
-//Define restartGame function
-    void restartGame()
-    {
-        cout << "Do you want to play again?" << endl;
-        cout << "Enter 1 to play again. Enter 0 to end." << endl;
-        
-        int restart = 0;
-        cin >> restart;
-                
-         //check for restart input validity
-            while (restart != 0)
-            {
-                while (restart < 0 || restart > 1)
-                    {
-                        cout << "Invalid please enter either 0 or 1" << endl;
-                        cin >> restart;
+    void playAgainstAI() {
+        char winner = 0;
+        while (!winner && std::count(board.begin(), board.end(), ' ') > 0) {
+            displayBoard();
+            if (current_player == 'X') {
+                bool validMove = false;
+                while (!validMove) {
+                    int position;
+                    std::cout << "Choose your move (0-8): ";
+                    std::cin >> position;
+                    validMove = makeMove(position);
+                    if (!validMove) {
+                        std::cout << "Invalid move, try again." << std::endl;
                     }
-        //restart game
-                if (restart == 1)
-                    {
-                        main();
-                    }
-                else 
-                {
-        //end game
-                    return;
+                }
+            } else {
+                makeAIMove();
+            }
+            winner = checkWin();
+            if (!winner) switchPlayer(); 
+        }
+        displayBoard();
+        displayResult(winner);
+    }
+
+    void playAgainstPlayer() {
+        char winner = 0;
+        while (!winner && std::count(board.begin(), board.end(), ' ') > 0) {
+            displayBoard();
+            bool validMove = false;
+            while (!validMove) {
+                int position;
+                std::cout << "Player " << current_player << "'s turn (0-8): ";
+                std::cin >> position;
+                validMove = makeMove(position);
+                if (!validMove) {
+                    std::cout << "Invalid move, try again." << std::endl;
                 }
             }
+            winner = checkWin();
+            if (!winner) switchPlayer(); 
+        }
+        displayBoard();
+        displayResult(winner);
     }
+
+    static void displayMenu() {
+        std::cout << "Welcome to Tic Tac Toe!" << std::endl;
+        std::cout << "1. Play Against AI" << std::endl;
+        std::cout << "2. Play Against Another Player" << std::endl;
+        std::cout << "3. Exit" << std::endl;
+    }
+
+    static int getUserInput() {
+        int choice;
+        std::cout << "Enter your choice (1-3): ";
+        std::cin >> choice;
+        return choice;
+    }
+};
+
+int main() {
+    srand(static_cast<unsigned int>(time(nullptr)));
+    TicTacToe game;
+    while (true) {
+        TicTacToe::displayMenu();
+        int choice = TicTacToe::getUserInput();
+
+        switch (choice) {
+            case 1:
+                game.initializeBoard();
+                game.playAgainstAI();
+                break;
+            case 2:
+                game.initializeBoard();
+                game.playAgainstPlayer();
+                break;
+            case 3:
+                std::cout << "Exiting game. Thanks for playing!" << std::endl;
+                return 0;
+            default:
+                std::cout << "Invalid choice, please try again." << std::endl;
+        }
+    }
+}
